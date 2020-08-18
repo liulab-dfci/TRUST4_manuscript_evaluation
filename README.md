@@ -14,7 +14,8 @@ Mixcr v3.0.12:
 
 CATT:
 	
-	~/Softwares/CATT/catt -t 8 --f1 $R1 --f2 $R2 -o $output --chain IGH
+	rm ~/CATT/config.jl
+	~/CATT/catt -t 8 --f1 $R1 --f2 $R2 -o $output
 
 TRUST4:
 
