@@ -30,3 +30,5 @@ For FASTQ input:
 For 10X Genomics data input:
 	
 	./run_trust4 -t 8 -b $BAM -f bcrtcr.fa --ref IMGT+C.fa --barcode CB
+
+## Scripts 
