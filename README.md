@@ -26,3 +26,7 @@ For BAM input:
 For FASTQ input:
 
 	./run_trust4 -t 8 -1 $R1 -2 $R2 -f bcrtcr.fa --ref IMGT+C.fa
+
+For 10X Genomics data input:
+	
+	./run_trust4 -t 8 -b $BAM -f bcrtcr.fa --ref IMGT+C.fa --barcode CB
