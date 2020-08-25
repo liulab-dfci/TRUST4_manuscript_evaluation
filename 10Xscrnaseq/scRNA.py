@@ -89,53 +89,38 @@ dataset = "10X_PBMC5K_protein"
 #dataset = "10X_vdj_v1_hs_nsclc"
 #dataset = "10X_vdj_nextgem_hs_pbmc3_umi"
 
-maestroFile = ""
+SeuratFile = ""
 umapFile = ""
 trustBarcodeReportFile = ""
 trustReportFile = ""
 
-path="/Users/lsong/Song/MyProjects/bcr/scRNA/" + dataset + "/"
-if (dataset == "10X_BMMC_PBMC"):
-    maestroFile = path+"10X_BMMC_PBMC_MAESTRO_metadata.tsv"
-    umapFile = path+"10X_BMMC_PBMC_MAESTRO_umap.tsv"
-    trustBarcodeReportFile = path+"TRUST_scRNA_PBMC_healthy_mRNA_barcode_report.tsv"
-    trustReportFile = path+"TRUST_scRNA_PBMC_healthy_mRNA_report.tsv"
-elif (dataset == "10X_PBMC_8K"):
-    maestroFile = path+"10X_PBMC_8k_MAESTRO_metadata.tsv"
-    umapFile = path+"10X_PBMC_8k_MAESTRO_umap.tsv"
-    trustBarcodeReportFile = path+"TRUST_pbmc8k_possorted_genome_bam_barcode_report.tsv"
-    trustReportFile = path+"TRUST_pbmc8k_possorted_genome_bam_report.tsv"
+path="/Users/lsong/Song/MyProjects/TRUST4/scRNA/" + dataset + "/"
 elif (dataset == "10X_PBMC5K_protein"):
-    maestroFile = path+"10X_PBMC5K_protein_MAESTRO_metadata.tsv"
-    umapFile = path+"10X_PBMC5K_protein_MAESTRO_umap.tsv"
+    SeuratFile = path+"10X_PBMC5K_protein_Seurat_metadata.tsv"
+    umapFile = path+"10X_PBMC5K_protein_Seurat_umap.tsv"
     trustBarcodeReportFile = path+"TRUST_5k_pbmc_protein_v3_nextgem_possorted_genome_bam_barcode_report.tsv"
     trustReportFile = path+"TRUST_5k_pbmc_protein_v3_nextgem_possorted_genome_bam_report.tsv"
 elif (dataset == "10X_BMMC_CLL"):
-    maestroFile = path+"10X_BMMC_CLL_MAESTRO_metadata.tsv"
-    umapFile = path+"10X_BMMC_CLL_MAESTRO_umap.tsv"
+    SeuratFile = path+"10X_BMMC_CLL_Seurat_metadata.tsv"
+    umapFile = path+"10X_BMMC_CLL_Seurat_umap.tsv"
     trustBarcodeReportFile = path+"TRUST_scRNA_BMMC_CLL_donor_mRNA_barcode_report.tsv"
     trustReportFile = path+"TRUST_scRNA_BMMC_CLL_donor_mRNA_report.tsv"
 elif (dataset == "10X_vdj_v1_hs_pbmc3"):
-    maestroFile = path+"10X_vdj_v1_pbmc3_MAESTRO_metadata.tsv"
-    umapFile = path+"10X_vdj_v1_pbmc3_MAESTRO_umap.tsv"
+    SeuratFile = path+"10X_vdj_v1_pbmc3_Seurat_metadata.tsv"
+    umapFile = path+"10X_vdj_v1_pbmc3_Seurat_umap.tsv"
     trustBarcodeReportFile = path+"TRUST_vdj_v1_hs_pbmc3_possorted_genome_bam_barcode_report.tsv"
     #trustBarcodeReportFile = path+"tmp.tsv"
     trustReportFile = path+"TRUST_vdj_v1_hs_pbmc3_possorted_genome_bam_report.tsv"
 elif (dataset == "10X_vdj_nextgem_hs_pbmc3"):
-    maestroFile = path+"10X_vdj_nextgem_hs_pbmc3_MAESTRO_metadata.tsv"
-    umapFile = path+"10X_vdj_nextgem_hs_pbmc3_MAESTRO_umap.tsv"
+    SeuratFile = path+"10X_vdj_nextgem_hs_pbmc3_Seurat_metadata.tsv"
+    umapFile = path+"10X_vdj_nextgem_hs_pbmc3_Seurat_umap.tsv"
     trustBarcodeReportFile = path+"TRUST_vdj_nextgem_hs_pbmc3_possorted_genome_bam_barcode_report.tsv"
     trustReportFile = path+"TRUST_vdj_nextgem_hs_pbmc3_possorted_genome_bam_report.tsv"
 elif (dataset == "10X_vdj_v1_hs_nsclc"):
-    maestroFile = path+"10X_vdj_v1_hs_nsclc_MAESTRO_metadata.tsv"
-    umapFile = path+"10X_vdj_v1_hs_nsclc_MAESTRO_umap.tsv"
+    SeuratFile = path+"10X_vdj_v1_hs_nsclc_Seurat_metadata.tsv"
+    umapFile = path+"10X_vdj_v1_hs_nsclc_Seurat_umap.tsv"
     trustBarcodeReportFile = path+"10X_vdj_v1_hs_nsclc_5gex_barcode_report.tsv"
     trustReportFile = path+"10X_vdj_v1_hs_nsclc_5gex_report.tsv"  
-elif (dataset == "10X_vdj_nextgem_hs_pbmc3_umi"):
-    maestroFile = path+"10X_vdj_nextgem_hs_pbmc3_MAESTRO_metadata.tsv"
-    umapFile = path+"10X_vdj_nextgem_hs_pbmc3_MAESTRO_umap.tsv"
-    trustBarcodeReportFile = path+"TRUST_vdj_nextgem_hs_pbmc3_possorted_genome_bam_umi_barcode_report.tsv"
-    #trustReportFile = path+"TRUST_vdj_nextgem_hs_pbmc3_possorted_genome_bam_report.tsv"
 
 
 # In[ ]:
@@ -208,11 +193,11 @@ def CellTypeRank(t):
     else:
         return (2, t)
 
-def GetCellTypeComposition(barcodeMaestro, barcodeInfo):
-    # Get the total number of maestro cells for each cell types.
+def GetCellTypeComposition(barcodeSeurat, barcodeInfo):
+    # Get the total number of Seurat cells for each cell types.
     cellTypes = {}
-    for b in barcodeMaestro.keys():
-        clusterName = barcodeMaestro[b][2]
+    for b in barcodeSeurat.keys():
+        clusterName = barcodeSeurat[b][2]
         if (clusterName in cellTypes):
             cellTypes[clusterName] += 1
         else:
@@ -223,11 +208,11 @@ def GetCellTypeComposition(barcodeMaestro, barcodeInfo):
         infoCellTypes[barcodeInfo[b][1]] += 1
         
     cellTypeComposition = {}
-    cellTypeComposition["Sum"] = {'#_of_cells': len(barcodeMaestro),'B':0, 'abT':0, 'gdT':0 }
+    cellTypeComposition["Sum"] = {'#_of_cells': len(barcodeSeurat),'B':0, 'abT':0, 'gdT':0 }
     cellTypeComposition["Missing"] = {'#_of_cells': 0,'B':0, 'abT':0, 'gdT':0 }
     
-    for b in barcodeMaestro.keys():
-        clusterName = barcodeMaestro[b][2]
+    for b in barcodeSeurat.keys():
+        clusterName = barcodeSeurat[b][2]
         if (b not in barcodeInfo):
             continue
         #if (clusterName == "CD8 T" and barcodeTrust[b][1] == 'B' ):
@@ -241,7 +226,7 @@ def GetCellTypeComposition(barcodeMaestro, barcodeInfo):
         cellTypeComposition["Missing"][t] = infoCellTypes[t] - cellTypeComposition["Sum"][t] 
     cnt = 0
     for b in barcodeInfo:
-        if (b not in barcodeMaestro):
+        if (b not in barcodeSeurat):
             cnt += 1
     data = pd.DataFrame.from_dict(cellTypeComposition)
     data = data.reindex(sorted(data.columns, key=CellTypeRank), axis=1)
@@ -252,22 +237,22 @@ def GetCellTypeComposition(barcodeMaestro, barcodeInfo):
 # In[164]:
 
 
-barcodeMaestro = {}
-fp = open( maestroFile, "r" )
+barcodeSeurat = {}
+fp = open( SeuratFile, "r" )
 fp.readline()
 for line in fp:
     line = line.rstrip()
     cols = line.split("\t")
-    if (len(cols) > 7 and cols[7] != "RNA"): # MAESTRO's cocluster
+    if (len(cols) > 7 and cols[7] != "RNA"): # Seurat's cocluster
         continue
-    barcodeMaestro[ cols[0].split("-")[0] ] = [int(cols[2]), int(cols[3]), cols[6]]
+    barcodeSeurat[ cols[0].split("-")[0] ] = [int(cols[2]), int(cols[3]), cols[6]]
 
 fp = open(umapFile, "r")
 fp.readline()
 for line in fp:
     line = line.rstrip()
     cols = line.split("\t")
-    barcodeMaestro[cols[0].split("-")[0]] += [float(cols[1]), float(cols[2])]
+    barcodeSeurat[cols[0].split("-")[0]] += [float(cols[1]), float(cols[2])]
 fp.close()
 
 
@@ -289,10 +274,10 @@ fp.close()
 
 
 # Summary on the number of cell, and the number of cells in different clusters.
-print( len(barcodeMaestro) )
+print( len(barcodeSeurat) )
 cellTypes = {}
-for b in barcodeMaestro.keys():
-    clusterName = barcodeMaestro[b][2]
+for b in barcodeSeurat.keys():
+    clusterName = barcodeSeurat[b][2]
     if (clusterName in cellTypes):
         cellTypes[clusterName] += 1
     else:
@@ -324,7 +309,7 @@ axIdx = 0
 for cellType in ["B", "abT"]:
     barcodeChainState = {}
     for b in barcodeTrust.keys():
-        if (b not in barcodeMaestro):
+        if (b not in barcodeSeurat):
             continue
         if (barcodeTrust[b][1] != cellType):
             continue
@@ -336,7 +321,7 @@ for cellType in ["B", "abT"]:
             chain2 = 0 
 
         hasChainStatus = (chain1 | (chain2 << 1))  
-        barcodeChainState[b] = [2 if hasChainStatus == 3 else 1, barcodeMaestro[b][0]]
+        barcodeChainState[b] = [2 if hasChainStatus == 3 else 1, barcodeSeurat[b][0]]
     data = pd.DataFrame()
     if (len(barcodeChainState)>0):
         data = pd.DataFrame.from_dict(barcodeChainState, orient="index")
@@ -364,8 +349,8 @@ for cellType in ["B", "abT"]:
 # In[169]:
 
 
-cellTypeCompositionDf, notInMaestro = GetCellTypeComposition(barcodeMaestro, barcodeTrust)
-print(notInMaestro)
+cellTypeCompositionDf, notInSeurat = GetCellTypeComposition(barcodeSeurat, barcodeTrust)
+print(notInSeurat)
 display(cellTypeCompositionDf)
 
 for chainCount in [1, 2]:
@@ -379,10 +364,10 @@ for chainCount in [1, 2]:
         if (cnt != chainCount):
             continue 
         #if (cnt == 2):
-        #    if (b not in barcodeMaestro):
+        #    if (b not in barcodeSeurat):
         #        print(b)
         barcodeTest[b] = barcodeTrust[b][:]
-    cellTypeCompositionDf, cnt = GetCellTypeComposition(barcodeMaestro, barcodeTest)
+    cellTypeCompositionDf, cnt = GetCellTypeComposition(barcodeSeurat, barcodeTest)
     print(cnt)
     display(cellTypeCompositionDf)
     
@@ -401,32 +386,32 @@ for chainCount in [1, 2]:
 
 
 # umap the results
-maestro = pd.DataFrame.from_dict(barcodeMaestro, orient="index")
-maestro = maestro.reset_index()
-maestro.columns = ["barcode", "nCount", "nFeature", "cluster", "UMAP_1", "UMAP_2"]
+Seurat = pd.DataFrame.from_dict(barcodeSeurat, orient="index")
+Seurat = Seurat.reset_index()
+Seurat.columns = ["barcode", "nCount", "nFeature", "cluster", "UMAP_1", "UMAP_2"]
 
 trust4Cell = []
-for b in barcodeMaestro.keys():
+for b in barcodeSeurat.keys():
     if (b in barcodeTrust):
         clusterName = barcodeTrust[b][1]  
     else:
         clusterName = "NA"
     trust4Cell.append(clusterName)
 
-maestro["TRUST4"] = trust4Cell
+Seurat["TRUST4"] = trust4Cell
 
 trust4Cell = []
-for b in barcodeMaestro.keys():
+for b in barcodeSeurat.keys():
     cGene = "*"
     if (b in barcodeTrust and barcodeTrust[b][2] != "*"):
         cGene = barcodeTrust[b][2].split(",")[3]
     trust4Cell.append(cGene)
-maestro["C gene"] = trust4Cell
+Seurat["C gene"] = trust4Cell
 
 #snsFig = sns.relplot(x="UMP_1", y="UMP_2", hue="TRUST4",
-#                     data=maestro.loc[(maestro["cluster"]=="CD8 T")], alpha=0.75, palette="bright" )
+#                     data=Seurat.loc[(Seurat["cluster"]=="CD8 T")], alpha=0.75, palette="bright" )
 
-snsFig = sns.relplot(x="UMAP_1", y="UMAP_2", hue="cluster", data = maestro, alpha=0.75, palette="bright" )
+snsFig = sns.relplot(x="UMAP_1", y="UMAP_2", hue="cluster", data = Seurat, alpha=0.75, palette="bright" )
 
 
 # In[172]:
@@ -438,47 +423,47 @@ if (dataset == "10X_BMMC_PBMC"):
 else:
     name = "CD8Tcells"
 snsFig = sns.relplot(x="UMAP_1", y="UMAP_2", hue="TRUST4",
-                    data=maestro.loc[(maestro["cluster"]==name) & (maestro["TRUST4"]!="NA")], 
+                    data=Seurat.loc[(Seurat["cluster"]==name) & (Seurat["TRUST4"]!="NA")], 
                      alpha=0.75, palette="bright", hue_order=["B", "abT", "gdT"] )
 
 
 # In[173]:
 
 
-# my own way to visualize both MAESTRO and TRUST4
+# my own way to visualize both Seurat and TRUST4
 sns.set(font_scale=1.5, style="white")
 fig = plt.figure(figsize=(10, 10))
 plt.grid(False)
 #plt.set_facecolor([1, 1, 1])
 cellTypeToScale = {}
 k = 0
-for i in maestro["cluster"].unique():
-    cellTypeToScale[i] = 0.4 + k / (len(maestro["cluster"].unique()) - 1) * 0.45
+for i in Seurat["cluster"].unique():
+    cellTypeToScale[i] = 0.4 + k / (len(Seurat["cluster"].unique()) - 1) * 0.45
     k += 1
 
 for cellType in cellTypeToScale:
-    maestroCellType = maestro.loc[ maestro["cluster"] == cellType ]
-    plt.plot(maestroCellType["UMAP_1"], maestroCellType["UMAP_2"], "o", marker="o", ms=1,
+    SeuratCellType = Seurat.loc[ Seurat["cluster"] == cellType ]
+    plt.plot(SeuratCellType["UMAP_1"], SeuratCellType["UMAP_2"], "o", marker="o", ms=1,
             color=(cellTypeToScale[cellType], cellTypeToScale[cellType], cellTypeToScale[cellType]))
 
 
 # Plot TRUST4's result
 trustCellTypeToColor = {"B":"r", "abT":"cyan", "gdT":"g"}
 for trustCellType in trustCellTypeToColor:
-    maestroTrustCellType = maestro.loc[ maestro["TRUST4"] == trustCellType]
+    SeuratTrustCellType = Seurat.loc[ Seurat["TRUST4"] == trustCellType]
     size = 1
     if (trustCellType == "gdT"):
         size=3
     if ("vdj" not in dataset and trustCellType == "abT"):
         size = 3
-    plt.plot(maestroTrustCellType["UMAP_1"], maestroTrustCellType["UMAP_2"], "o", marker="o", ms=size,
+    plt.plot(SeuratTrustCellType["UMAP_1"], SeuratTrustCellType["UMAP_2"], "o", marker="o", ms=size,
             color = trustCellTypeToColor[trustCellType])
 
 # Add the annotation
 for cellType in cellTypeToScale:    
-    maestroCellType = maestro.loc[ maestro["cluster"] == cellType ]
-    x = np.median(maestroCellType["UMAP_1"]) - 1
-    y = np.median(maestroCellType["UMAP_2"])
+    SeuratCellType = Seurat.loc[ Seurat["cluster"] == cellType ]
+    x = np.median(SeuratCellType["UMAP_1"]) - 1
+    y = np.median(SeuratCellType["UMAP_2"])
     plt.text(x, y, cellType, fontdict={"size":20, "weight":"bold"})
 plt.xlabel("UMAP_1")
 plt.ylabel("UMAP_2")
@@ -495,14 +480,14 @@ for trustCellType in trustCellTypeToColor:
                             ms=size, ls="", label=trustCellType)[0])
 plt.legend(handles=patches, loc="lower left")
 
-#plt.savefig( dataset+"_"+"maestro_trust4_umap" + ".pdf", bbox_inches="tight", format="pdf" )
+#plt.savefig( dataset+"_"+"Seurat_trust4_umap" + ".pdf", bbox_inches="tight", format="pdf" )
 
 
 # In[174]:
 
 
-maestroTrustCellType = maestro.loc[ (maestro["TRUST4"] == "gdT") ]
-maestroTrustCellType["barcode"]
+SeuratTrustCellType = Seurat.loc[ (Seurat["TRUST4"] == "gdT") ]
+SeuratTrustCellType["barcode"]
 
 
 # In[175]:
@@ -510,15 +495,15 @@ maestroTrustCellType["barcode"]
 
 # Color the isotypes in B cell cluster.
 snsFig = sns.relplot(x="UMAP_1", y="UMAP_2", hue="C gene", style = "cluster",
-                    data=maestro.loc[(maestro["cluster"].str.contains("B") )
-                                      & (maestro["C gene"].str.contains("IGH"))],
+                    data=Seurat.loc[(Seurat["cluster"].str.contains("B") )
+                                      & (Seurat["C gene"].str.contains("IGH"))],
                     alpha=0.75, palette="bright")
 
 
 # In[176]:
 
 
-a=maestro.loc[maestro["cluster"].str.contains("B")]
+a=Seurat.loc[Seurat["cluster"].str.contains("B")]
 
 
 # In[177]:
@@ -526,8 +511,8 @@ a=maestro.loc[maestro["cluster"].str.contains("B")]
 
 # Color the isotypes in B cell cluster.
 snsFig = sns.relplot(x="UMAP_1", y="UMAP_2", hue="C gene",
-                    data=maestro.loc[maestro["cluster"].str.contains("Plasma") 
-                                      & (maestro["C gene"].str.contains("IGH"))],
+                    data=Seurat.loc[Seurat["cluster"].str.contains("Plasma") 
+                                      & (Seurat["C gene"].str.contains("IGH"))],
                     alpha=0.75, palette="bright")
 
 
@@ -554,7 +539,7 @@ for chainType in range(1):
         if (maxCdr3 == "" or cdr3Cnt[chainType][cdr3] > cdr3Cnt[chainType][maxCdr3]):
             maxCdr3 = cdr3 
     print(cdr3Cnt[chainType][maxCdr3])
-    data = maestro.copy()
+    data = Seurat.copy()
     chosenBarcode = set({})
     for b in barcodeTrust.keys():
         idx = 3 
@@ -568,7 +553,7 @@ for chainType in range(1):
         if (cols[4] == maxCdr3):
             chosenBarcode.add(b)
     mark = []
-    for b in barcodeMaestro.keys():
+    for b in barcodeSeurat.keys():
         if (b in chosenBarcode):
             mark.append(1) 
         else:
@@ -587,7 +572,7 @@ for chainType in range(1):
 
 for chainType in range(1):
     maxCdr3 = "TGTGCGAGGAAAGGGGGTGATTTCTTTGGTTTTGATATCTGG"
-    data = maestro.copy()
+    data = Seurat.copy()
     chosenBarcode = set({})
     for b in barcodeTrust.keys():
         idx = 3 
@@ -601,7 +586,7 @@ for chainType in range(1):
         if (cols[4] == maxCdr3):
             chosenBarcode.add(b)
     mark = []
-    for b in barcodeMaestro.keys():
+    for b in barcodeSeurat.keys():
         if (b in chosenBarcode):
             mark.append(1) 
         else:
@@ -633,7 +618,7 @@ for b in barcodeTrust.keys():
         cdr3Cnt[chainType][cols[4]] += 1
 
 for cdr3 in cdr3Cnt[0]:
-    data = maestro.copy()
+    data = Seurat.copy()
     chosenBarcode = set({})
     for b in barcodeTrust.keys():
         if (barcodeTrust[b][2] == "*" or barcodeTrust[b][3] == "*"):
@@ -644,8 +629,8 @@ for cdr3 in cdr3Cnt[0]:
         if (cols[4] == cdr3):
             chosenBarcode.add(b)
     mark = []
-    for b in barcodeMaestro.keys():
-        if (b in chosenBarcode and barcodeMaestro[b][2] == "PlasmaCells"):
+    for b in barcodeSeurat.keys():
+        if (b in chosenBarcode and barcodeSeurat[b][2] == "PlasmaCells"):
             mark.append(1) 
         else:
             mark.append(0)
@@ -659,7 +644,7 @@ for cdr3 in cdr3Cnt[0]:
 # In[181]:
 
 
-barcodeMaestro
+barcodeSeurat
 
 
 # In[182]:
@@ -667,7 +652,7 @@ barcodeMaestro
 
 for chainType in [1]:
     maxCdr3 = "TGTCAACAGTATGGTAACTCATTGTGGACGTTC"
-    data = maestro.copy()
+    data = Seurat.copy()
     chosenBarcode = set({})
     for b in barcodeTrust.keys():
         idx = 3 
@@ -681,7 +666,7 @@ for chainType in [1]:
         if (cols[4] == maxCdr3):
             chosenBarcode.add(b)
     mark = []
-    for b in barcodeMaestro.keys():
+    for b in barcodeSeurat.keys():
         if (b in chosenBarcode):
             mark.append(1) 
         else:
@@ -703,8 +688,8 @@ for i in [2, 3]:
     for b in barcodeTrust:
         if (barcodeTrust[b][1] != "B" or barcodeTrust[b][2] == "*" or barcodeTrust[b][3] == "*"):
             continue
-        if (b not in barcodeMaestro or 
-                ("Plasma" not in barcodeMaestro[b][2])):
+        if (b not in barcodeSeurat or 
+                ("Plasma" not in barcodeSeurat[b][2])):
             continue
         #if (b not in barcode10X or barcode10X[b][1] != "B"):
         #    continue
@@ -727,8 +712,8 @@ for i in [2, 3]:
     for b in barcode10X:
         if (barcode10X[b][1] != "B" or barcode10X[b][2] == "*" or barcode10X[b][3] == "*"):
             continue
-        if (b not in barcodeMaestro or 
-                ("Plasma" not in barcodeMaestro[b][2])):
+        if (b not in barcodeSeurat or 
+                ("Plasma" not in barcodeSeurat[b][2])):
             continue
         cols = barcode10X[b][i].split(",") 
         if (cols[4] not in cdr3Cnt):
@@ -892,53 +877,53 @@ if ("vdj" in dataset):
     print( len(barcode10X) )
     display(GetChainState(barcode10X, False))
     
-    cellTypeCompositionDf, notInMaestro = GetCellTypeComposition(barcodeMaestro, barcode10X)
-    print(notInMaestro)
+    cellTypeCompositionDf, notInSeurat = GetCellTypeComposition(barcodeSeurat, barcode10X)
+    print(notInSeurat)
     display(pd.DataFrame.from_dict(cellTypeCompositionDf))
     
     # Use pie chart to visualize the composition.
-    #cellTypeCompositionTrust = GetCellTypeComposition(barcodeMaestro, barcodeTrust)
-    #cellTypeComposition10X = GetCellTypeComposition(barcodeMaestro, barcode10X) 
+    #cellTypeCompositionTrust = GetCellTypeComposition(barcodeSeurat, barcodeTrust)
+    #cellTypeComposition10X = GetCellTypeComposition(barcodeSeurat, barcode10X) 
     
     
     # umap the results
     tenXCell = []
-    for b in barcodeMaestro.keys():
+    for b in barcodeSeurat.keys():
         if (b in barcode10X):
             clusterName = barcode10X[b][1]  
         else:
             clusterName = "NA"
         tenXCell.append(clusterName)
-    maestro["10X"] = tenXCell
+    Seurat["10X"] = tenXCell
 
     tenXCell = []
-    for b in barcodeMaestro.keys():
+    for b in barcodeSeurat.keys():
         cGene = "*"
         if (b in barcode10X and barcode10X[b][2] != "*"):
             cGene = barcode10X[b][2].split(",")[3]
         tenXCell.append(cGene)
-    maestro["C gene"] = tenXCell
+    Seurat["C gene"] = tenXCell
     
     snsFig = sns.relplot(x="UMAP_1", y="UMAP_2", hue="C gene", style = "cluster",
-                    data=maestro.loc[maestro["cluster"].str.contains("B") & (maestro["C gene"].str.contains("IGH"))
-                                    & ~(maestro["C gene"].str.contains("IGHM"))],
+                    data=Seurat.loc[Seurat["cluster"].str.contains("B") & (Seurat["C gene"].str.contains("IGH"))
+                                    & ~(Seurat["C gene"].str.contains("IGHM"))],
                     alpha=0.75, palette="bright")
     #snsFig = sns.relplot(x="UMP_1", y="UMP_2", hue="TRUST4",
-    #                     data=maestro.loc[(maestro["cluster"]=="CD8 T")], alpha=0.75, palette="bright" )
+    #                     data=Seurat.loc[(Seurat["cluster"]=="CD8 T")], alpha=0.75, palette="bright" )
 
 
 # In[186]:
 
 
 # Use pie chart to visualize the composition.
-cellTypeCompositionTrust, tmp = GetCellTypeComposition(barcodeMaestro, barcodeTrust)
+cellTypeCompositionTrust, tmp = GetCellTypeComposition(barcodeSeurat, barcodeTrust)
 for cellType in cellTypeCompositionTrust.columns:
-    sizes = [0, 0, 0, 0] # Maestro-only, TRUST4-only, 10X-only, Trust+10X 
-    for c in barcodeMaestro.keys():
+    sizes = [0, 0, 0, 0] # Seurat-only, TRUST4-only, 10X-only, Trust+10X 
+    for c in barcodeSeurat.keys():
         flag = 0
         if (c in barcodeTrust):
             flag |= 1 
-        if (c in barcodeMaestro.keys()):
+        if (c in barcodeSeurat.keys()):
             flag |= 2 
         sizes[flag] += 1
     print(sizes)
@@ -1000,9 +985,9 @@ if ("vdj" in dataset):
         if ( b in barcode10X and "b" in barcode10Xbt[b] and "t" in barcode10Xbt[b]):
             mixCellType = True
         if (False and trustCellType == "abT" and tenCellType == "B"):
-            print("abT->B ", b, " ", barcodeMaestro[b][2] if (b in barcodeMaestro) else "NA", " ", mixCellType)
+            print("abT->B ", b, " ", barcodeSeurat[b][2] if (b in barcodeSeurat) else "NA", " ", mixCellType)
         if (False and trustCellType == "B" and tenCellType == "abT"):
-            print("B->abT ", b, " ", barcodeMaestro[b][2] if (b in barcodeMaestro) else "NA", " ", mixCellType)
+            print("B->abT ", b, " ", barcodeSeurat[b][2] if (b in barcodeSeurat) else "NA", " ", mixCellType)
         cellTypeAssignment[trustCellType][tenCellType] += 1
     for b in barcode10X:
         if (b not in barcodeTrust):
@@ -1044,7 +1029,7 @@ if ("vdj" in dataset):
                     else:
                         match = "Missing"
             barcodeMatch[b][i - 2] = match
-    #print(barcode10X["AATCCAGAGCTGCGAA"], "\n", barcodeTrust["AATCCAGAGCTGCGAA"], "\n", barcodeMaestro["AATCCAGAGCTGCGAA"])        
+    #print(barcode10X["AATCCAGAGCTGCGAA"], "\n", barcodeTrust["AATCCAGAGCTGCGAA"], "\n", barcodeSeurat["AATCCAGAGCTGCGAA"])        
     for chainCount in [1]:  
         #fig, axes = plt.subplots(1, 2, figsize=(15, 5))
         axIdx = 0 
@@ -1056,7 +1041,7 @@ if ("vdj" in dataset):
                 if (barcodeTrust[b][1] != cellType
                    or (b in barcode10X and barcode10X[b][1] != cellType) ):
                     continue
-                if (b not in barcodeMaestro): # only restricted to the cells retained in Seurat
+                if (b not in barcodeSeurat): # only restricted to the cells retained in Seurat
                     continue
                 cnt = 0
                 if (barcodeTrust[b][2] != "*"):
@@ -1111,14 +1096,14 @@ if ("vdj" in dataset):
     #for cellType in ["B", "abT"]:
     #    for b in barcodeTrust.keys():
     
-    # Chekc how many paired-chain cells in TRUST4 in in MAESTRO
+    # Chekc how many paired-chain cells in TRUST4 in in Seurat
     cnt = 0
     total = 0
     for b in barcodeTrust:
         if (barcodeTrust[b][2] == "*" or barcodeTrust[b][3] == "*"):
             continue
         total += 1
-        if (b in barcodeMaestro):
+        if (b in barcodeSeurat):
             cnt += 1
     print(cnt, total)
      
@@ -1128,7 +1113,7 @@ if ("vdj" in dataset):
         if (barcode10X[b][2] == "*" or barcode10X[b][3] == "*"):
             continue
         total += 1
-        if (b in barcodeMaestro):
+        if (b in barcodeSeurat):
             cnt += 1
     print(cnt, total)
         
@@ -1143,13 +1128,13 @@ barcodeMatch
 # In[190]:
 
 
-# Analyze only considering the barcode from MAESTRO
+# Analyze only considering the barcode from Seurat
 # Compare TRUST and 10X's result
 sns.set(font_scale=1.25, style="white")
 if ("vdj" in dataset):
     barcodeMatch = {} 
     # match 0: no match. 1: 10X has no such information. 2: match. -1: 10X and T4 both have no information
-    for b in barcodeMaestro.keys():
+    for b in barcodeSeurat.keys():
         if (b not in barcodeMatch):
             barcodeMatch[b] = [0, 0]
        
@@ -1193,7 +1178,7 @@ if ("vdj" in dataset):
     for cellType in ["B", "abT"]:
         data = {"Chain1":{"10X only":0, "Mismatch":0, "T4 only":0, "Secondary":0, "Match":0}, 
                 "Chain2":{"10X only":0, "Mismatch":0, "T4 only":0, "Secondary":0, "Match":0}}
-        for b in barcodeMaestro.keys():
+        for b in barcodeSeurat.keys():
             if (b in barcodeTrust and barcodeTrust[b][1] != cellType):
                 continue
             if (b in barcode10X and barcode10X[b][1] != cellType):
@@ -1233,7 +1218,7 @@ if ("vdj" in dataset):
     axIdx = 0 
     for cellType in ["B", "abT"]:
         data = {"10X only":0, "T4 only":0, "Complementary":0, "Mismatch":0, "Match/Secondary":0}
-        for b in barcodeMaestro.keys():
+        for b in barcodeSeurat.keys():
             match = ""
             if (b in barcodeTrust and barcodeTrust[b][1] != cellType):
                 continue
@@ -1289,7 +1274,7 @@ if ("vdj" in dataset):
 if (dataset == "10X_vdj_nextgem_hs_pbmc3"):
     data = [[], [], [], []]
     for b in barcodeTrust:
-        if b not in barcodeMaestro:
+        if b not in barcodeSeurat:
             continue
         tag = 0
         if (barcodeTrust[b][1] == "abT" or barcodeTrust[b][1] == "gdT"):
@@ -1321,19 +1306,19 @@ if (dataset == "10X_vdj_nextgem_hs_pbmc3"):
 # In[192]:
 
 
-# Use figure to show the annotation of TRUST4, 10X V(D)J and Maestro
+# Use figure to show the annotation of TRUST4, 10X V(D)J and Seurat
 if ("vdj" in dataset):
-    # Get the total number of Maestro cells for each cell types.
+    # Get the total number of Seurat cells for each cell types.
     cellTypes = {}
-    for b in barcodeMaestro.keys():
-        clusterName = barcodeMaestro[b][2]
+    for b in barcodeSeurat.keys():
+        clusterName = barcodeSeurat[b][2]
         if (clusterName in cellTypes):
             cellTypes[clusterName] += 1
         else:
             cellTypes[clusterName] = 1
     
     cellTypeComposition = {}
-    cellTypeComposition["Sum"] = {'#_of_cells': len(barcodeMaestro)}
+    cellTypeComposition["Sum"] = {'#_of_cells': len(barcodeSeurat)}
     cellTypeComposition["Missing"] = {'#_of_cells': 0}
     
     for b in barcodeTrust.keys():
@@ -1349,12 +1334,12 @@ if ("vdj" in dataset):
             continue
         else:
             key = "TRUST4_"+barcodeTrust[b][1]#+"_"+str(cnt)
-        if (b not in barcodeMaestro):
+        if (b not in barcodeSeurat):
             if (key not in cellTypeComposition["Missing"]):
                 cellTypeComposition["Missing"][key] = 0
             cellTypeComposition["Missing"][key] += 1
             continue
-        clusterName = barcodeMaestro[b][2]
+        clusterName = barcodeSeurat[b][2]
             
         if ( clusterName not in cellTypeComposition ):
             cellTypeComposition[clusterName] = {'Seurat': cellTypes[clusterName] }
@@ -1378,12 +1363,12 @@ if ("vdj" in dataset):
             continue
         else:
             key = "10X_V(D)J_"+barcode10X[b][1]#+"_"+str(cnt)
-        if (b not in barcodeMaestro):
+        if (b not in barcodeSeurat):
             if (key not in cellTypeComposition["Missing"]):
                 cellTypeComposition["Missing"][key] = 0
             cellTypeComposition["Missing"][key] += 1
             continue
-        clusterName = barcodeMaestro[b][2]
+        clusterName = barcodeSeurat[b][2]
             
         if ( clusterName not in cellTypeComposition ):
             cellTypeComposition[clusterName] = {'Seurat': cellTypes[clusterName] }
@@ -1423,8 +1408,8 @@ if ("vdj" in dataset and "pbmc" in dataset):
     for chain in [2, 3]:
         cd8T = {}
         otherT = {}
-        for b in barcodeMaestro:
-            if ("CD8" in barcodeMaestro[b][2] and b in barcodeTrust
+        for b in barcodeSeurat:
+            if ("CD8" in barcodeSeurat[b][2] and b in barcodeTrust
                and barcodeTrust[b][1] == "abT" and barcodeTrust[b][chain] != "*"):
                 c = (barcodeTrust[b][chain].split(","))[4]
                 if (c=="*"):
@@ -1434,8 +1419,8 @@ if ("vdj" in dataset and "pbmc" in dataset):
                 cd8T[c] += 1
         found = 0
         total = 0
-        for b in barcodeMaestro:
-            if (("CD4" in barcodeMaestro[b][2] or "Treg" in barcodeMaestro[b][2])
+        for b in barcodeSeurat:
+            if (("CD4" in barcodeSeurat[b][2] or "Treg" in barcodeSeurat[b][2])
                and b in barcodeTrust and barcodeTrust[b][1] == "abT" and barcodeTrust[b][chain] != "*" ):
                 c = (barcodeTrust[b][chain].split(","))[4]
                 if (c in cd8T):
@@ -1460,8 +1445,8 @@ if ("vdj" in dataset and "pbmc" in dataset):
     otherT = {}
     barcode = barcode10X
     tmp = 0
-    for b in barcodeMaestro:
-        if ("CD8" in barcodeMaestro[b][2] and b in barcode
+    for b in barcodeSeurat:
+        if ("CD8" in barcodeSeurat[b][2] and b in barcode
            and barcode[b][1] == "abT" ):
             if (barcode[b][2] == "*"):
                 continue
@@ -1481,8 +1466,8 @@ if ("vdj" in dataset and "pbmc" in dataset):
     found = 0
     total = 0
     alreadyFound = {}
-    for b in barcodeMaestro:
-        if (("CD4" in barcodeMaestro[b][2] or "Treg" in barcodeMaestro[b][2])
+    for b in barcodeSeurat:
+        if (("CD4" in barcodeSeurat[b][2] or "Treg" in barcodeSeurat[b][2])
            and b in barcode and barcode[b][1] == "abT"):
             if (barcode[b][2] == "*"):
                 continue
@@ -1637,10 +1622,10 @@ if ("nsclc" in dataset):
             
     # Compare the SHM rate bewteen heavy and light chains in plasma cells
     similarity = [[], []]
-    for b in barcodeMaestro:
+    for b in barcodeSeurat:
         if (b not in barcodePairChain):
             continue 
-        if (barcodeMaestro[b][2] != "PlasmaCells"):
+        if (barcodeSeurat[b][2] != "PlasmaCells"):
             continue
         if (len(barcodePairChain[b][0]) == 0 or
            len(barcodePairChain[b][1]) == 0):
@@ -1685,15 +1670,15 @@ if ("nsclc" in dataset):
     # Compare the SHM rate bewteen heavy chain in plasma and memory B cells
     for chain in [0, 1]:
         similarity = [[], []]
-        for b in barcodeMaestro:
+        for b in barcodeSeurat:
             if (b not in barcodePairChain):
                 continue
             if (len(barcodePairChain[b][chain]) == 0):
                 continue
             idx = -1
-            if (barcodeMaestro[b][2] == "MemoryBcells"):
+            if (barcodeSeurat[b][2] == "MemoryBcells"):
                 idx = 0 
-            elif (barcodeMaestro[b][2] == "PlasmaCells"):
+            elif (barcodeSeurat[b][2] == "PlasmaCells"):
                 idx = 1
             if (idx == -1):
                 continue
@@ -1711,7 +1696,7 @@ if ("nsclc" in dataset):
 # In[197]:
 
 
-barcodeMaestro
+barcodeSeurat
 
 
 # In[198]:
@@ -1805,76 +1790,3 @@ if (dataset == "10X_vdj_nextgem_hs_pbmc3"):
     fp.close() 
         
 
-
-# In[199]:
-
-
-print(len(barcode10XOne), len(barcodeVDJTrust))
-
-
-# ### Compare the TCR/BCR-seq part of Cellranger and TRUST4 cont.
-# if (dataset == "10X_vdj_nextem_hs_pbmc3"):
-#     cellTypeAssignment = {"*":{"*":0, "B":0, "abT":0}, "B":{}, "abT":{}, "gdT":{"B":0}}
-#     for b in barcodeVDJTrust.keys():
-#         trustCellType = barcodeVDJTrust[b][1]
-#         if (b not in barcode10XOne):
-#             tenCellType = "*"
-#         else:
-#             tenCellType = barcode10XOne[b][1]
-#         if (tenCellType not in cellTypeAssignment[trustCellType]):
-#             cellTypeAssignment[trustCellType][tenCellType] = 0
-#         cellTypeAssignment[trustCellType][tenCellType] += 1
-#     for b in barcode10XOne:
-#         if (b not in barcodeVDJTrust):
-#             cellTypeAssignment["*"][barcode10XOne[b][1]] += 1
-#     display(pd.DataFrame.from_dict(cellTypeAssignment))        
-#     
-#     # Use maestro's barcode to compare TRUST4 VDJ and 10X VDJ
-#     barcodeMatch = {}
-#     for b in barcodeMaestro: 
-#         if b not in barcodeMatch:
-#             barcodeMatch[b] = [0, 0]
-#         for i in [2, 3]:
-#             match = ""
-#             if (b not in barcode10XOne and b not in barcodeVDJTrust):
-#                 continue
-#             if (b not in barcode10XOne):
-#                 #if (i == 3 and barcodeTrust[b][1] == "B" and barcodeTrust[b][2] == "*"):
-#                 #            print(barcodeTrust[b])
-#                 match = "T4 only"
-#             elif (b not in barcodeVDJTrust):
-#                 match = "10X only"
-#             else:
-#                 if (barcodeVDJTrust[b][i] == "*" and barcode10XOne[b][i] == "*"):
-#                     continue
-#                     
-#                 if ( IsMatch(barcodeVDJTrust[b][i], barcode10XOne[b][i], True)):
-#                     match = "Match"
-#                 else:
-#                     match = "Mismatch"
-#             barcodeMatch[b][i - 2] = match
-#     fig, axes = plt.subplots(1, 2, figsize=(15, 5))        
-#     for i in [0, 1]:  
-#         data = {"10X only":0, "Mismatch":0, "T4 only":0, "Match":0}
-#         for b in barcodeMaestro.keys():
-#             if (barcodeMatch[b][i] != 0):
-#                 data[barcodeMatch[b][i]] += 1
-#         data = pd.DataFrame.from_dict(data, orient="index")
-#         data = data.reset_index()
-#         #display(data)    
-#         data.columns = ["Category", "Count"]
-#         data = data[data["Count"] != 0]
-#         display(data)
-#         #data = data.replace([-1, 0, 1, 2], ["Both missing", "False", "10X missing", "True"])
-#         #display(data)
-#         #snsFig = sns.barplot(x="Chain", y="Count", hue="Category", data=data, palette="bright",
-#         #           hue_order = ["Mismatch", "T4 only", "Secondary", "Match"], ax = axes[i])
-#         snsFig = sns.barplot(x="Category", y="Count", data=data, palette="bright", ax = axes[i])
-#         axes[i].set_title( "IGH" if (i == 0) else "IGK/IGL", fontdict={'fontsize':"medium", "fontweight":"bold"} )
-#         if (axIdx > 0):
-#             snsFig.set(ylabel="")
-#         snsFig.set(xlabel="")
-#         #plt.legend()
-#         #plt.savefig(dataset+"_ChainCount_"+str(chainCount)+"_CDR3match.pdf", bbox_inches="tight", format="pdf" )
-#     plt.show()
-# 
