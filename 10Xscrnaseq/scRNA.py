@@ -912,23 +912,6 @@ if ("vdj" in dataset):
     #                     data=Seurat.loc[(Seurat["cluster"]=="CD8 T")], alpha=0.75, palette="bright" )
 
 
-# In[186]:
-
-
-# Use pie chart to visualize the composition.
-cellTypeCompositionTrust, tmp = GetCellTypeComposition(barcodeSeurat, barcodeTrust)
-for cellType in cellTypeCompositionTrust.columns:
-    sizes = [0, 0, 0, 0] # Seurat-only, TRUST4-only, 10X-only, Trust+10X 
-    for c in barcodeSeurat.keys():
-        flag = 0
-        if (c in barcodeTrust):
-            flag |= 1 
-        if (c in barcodeSeurat.keys()):
-            flag |= 2 
-        sizes[flag] += 1
-    print(sizes)
-    
-        
 
 
 # In[187]:
@@ -1496,96 +1479,6 @@ if ("vdj" in dataset and "pbmc" in dataset):
     print(len(alreadyFound))
 
 
-# In[195]:
-
-
-barcode10X
-
-
-# # Compare TRUST and 10X's result
-# barcodeTest = {}
-# fp = open( path+"tmp.tsv", "r" )
-# fp.readline()
-# for line in fp:
-#     line = line.rstrip()
-#     cols = line.split("\t")
-#     barcodeTest[ cols[0].split("-")[0] ] = cols
-# fp.close()
-#     
-# 
-# if ("vdj" in dataset):
-#     # Find out how many cells share things.
-#     sharedCnt = 0
-#     for b in barcodeTest.keys():
-#         if (b in barcode10X):
-#             sharedCnt += 1
-#     print(len(barcodeTest), len(barcode10X), sharedCnt)  
-#     barcodeMatch = {} 
-#     
-#     # Test how many cells have consistent cell type assignment
-#     cellTypeAssignment = {"B":{}, "abT":{}, "gdT":{}}
-#     for b in barcodeTest.keys():
-#         trustCellType = barcodeTest[b][1]
-#         if (b not in barcode10X):
-#             tenCellType = "*"
-#         else:
-#             tenCellType = barcode10X[b][1]
-#         if (tenCellType not in cellTypeAssignment[trustCellType]):
-#             cellTypeAssignment[trustCellType][tenCellType] = 0
-#         cellTypeAssignment[trustCellType][tenCellType] += 1
-#     display(pd.DataFrame.from_dict(cellTypeAssignment))
-#         
-#         
-#     # match 0: no match. 1: 10X has no such information. 2: match. -1: 10X and T4 both have no information  
-#     for b in barcodeTest.keys():
-#         if (b not in barcodeMatch):
-#             barcodeMatch[b] = [0, 0]
-#        
-#         for i in [2, 3]:
-#             match = 0
-#             if (barcodeTest[b][i] != "*"):
-#                 if (b not in barcode10X):
-#                     match = 1
-#                 else:
-#                     if ( IsMatch(barcodeTest[b][i], barcode10X[b][i], True)):
-#                         match = 2
-#                     else:
-#                         if (i == 2 and barcodeTest[b][1] == "abT"):
-#                             print(barcodeTrust[b], barcode10X[b])
-#                         match = 0
-#             else: # TRUST4 has no result.
-#                 if (b not in barcode10X):
-#                     match = -1
-#                 else:
-#                     if (barcode10X[b][i] != "*"):
-#                         match = 0
-#                     else:
-#                         match = -1
-#             barcodeMatch[b][i - 2] = match
-#             
-#     for chainCount in [2]:  
-#         #for cellType in ["B", "abT", "gdT"]:
-#         for cellType in ["abT"]:
-#             data = {"Chain1":{-1:0, 0:0, 1:0, 2:0}, "Chain2":{-1:0, 0:0, 1:0, 2:0}}
-#             for b in barcodeTest.keys():
-#                 if (barcodeTest[b][1] != cellType):
-#                     continue
-#                 cnt = 0
-#                 if (barcodeTest[b][2] != "*"):
-#                     cnt += 1
-#                 if (barcodeTest[b][3] != "*"):
-#                     cnt += 1
-#                 if (cnt != chainCount):
-#                     continue 
-#                 
-#                 data["Chain1"][barcodeMatch[b][0]] += 1
-#                 data["Chain2"][barcodeMatch[b][1]] += 1
-#             df = pd.DataFrame.from_dict(data, orient="index")   
-#             display(df)    
-#                     
-#                 
-#         
-
 # In[196]:
 
 
@@ -1691,15 +1584,6 @@ if ("nsclc" in dataset):
         fig, ax = plt.subplots(1, 1, figsize=(5, 5))
         sns.boxplot(x = "Type", y = "Similarity", data=data, ax = ax)
         #sp.stats.wilcoxon(x=similarity[0], y=similarity[1])
-
-
-# In[197]:
-
-
-barcodeSeurat
-
-
-# In[198]:
 
 
 # Compare the TCR/BCR-seq part of Cellranger and TRUST4
