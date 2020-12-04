@@ -12,6 +12,7 @@ export STAR_COMMAND="STAR"
 # Output paths for STAR, MiXCR, TRUST, IMREP and VDJER
 export STAR_OUTPUT="star"
 export MIXCR_OUTPUT="mixcr"
+export MIXCR_DEFAULT_OUTPUT="mixcr-default"
 export TRUST_OUTPUT="trust"
 
 # path to binaries
@@ -308,7 +309,11 @@ if [ -z "${NO_MIXCR}" ]; then
 	ls -1 $MIXCR_OUTPUT | grep "vdjca$" | grep -v "rescued" | parallel --line-buffer "${MIXCR_EXECUTABLE} extend -f --report ${MIXCR_OUTPUT}/{.}.extendReport ${MIXCR_OUTPUT}/{.}_rescued2.vdjca ${MIXCR_OUTPUT}/{.}_rescued2_extended.vdjca"
 	ls -1 $MIXCR_OUTPUT | grep "vdjca$" | grep -v "rescued" | parallel --line-buffer "${MIXCR_EXECUTABLE} assemble -f -ObadQualityThreshold=0 --report ${MIXCR_OUTPUT}/{.}.assembleReport ${MIXCR_OUTPUT}/{.}_rescued2_extended.vdjca ${MIXCR_OUTPUT}/{.}.clns"
 	ls -1 $MIXCR_OUTPUT | grep "clns$" | grep -v "rescued" | parallel --line-buffer "${MIXCR_EXECUTABLE} exportClones ${MIXCR_OUTPUT}/{.}.clns ${MIXCR_OUTPUT}/{.}.txt"
+	
+	ls -1 $MIXCR_OUTPUT | grep "vdjca$" | grep -v "rescued" | parallel --line-buffer "${MIXCR_EXECUTABLE} assemble -f --report ${MIXCR_DEFAULT_OUTPUT}/{.}.assembleReport ${MIXCR_OUTPUT}/{.}_rescued2_extended.vdjca ${MIXCR_DEFAULT_OUTPUT}/{.}.clns"
+	ls -1 $MIXCR_DEFAULT_OUTPUT | grep "clns$" | grep -v "rescued" | parallel --line-buffer "${MIXCR_EXECUTABLE} exportClones ${MIXCR_DEFAULT_OUTPUT}/{.}.clns ${MIXCR_DEFAULT_OUTPUT}/{.}.txt"
 fi
+
 
 
 ##############################################################################################################################
