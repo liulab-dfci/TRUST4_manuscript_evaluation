@@ -15,7 +15,10 @@ Mixcr v3.0.12:
 CATT:
 	
 	rm ~/CATT/config.jl
-	~/CATT/catt -t 8 --f1 $R1 --f2 $R2 -o $output
+	~/CATT/catt -t 8 --f1 $R1 --f2 $R2 -o $output --bowt 8 --chain {IGH, TRB, TRA}
+
+TRUST3:
+	trust -f $dataPath/rna_seq_bam_star_${l}bp/FZ-${s}.Aligned.sortedByCoord.out.bam -n 8 -g hg38 {-B} {-B -L}	
 
 TRUST4:
 
